@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Mappa Gioiosa Marea con finestra informativa</title>
+    <title>Mappa Gioiosa Marea con markers multipli</title>
     <meta name="viewport" content="initial-scale=1.0">
     <meta charset="utf-8">
     <style>
@@ -22,9 +22,9 @@
     <script>
       var map;
       function initMap() {
-        var myLatLng = {lat: 38.174833, lng: 14.896602};
+        var gioiosa_marea = {lat: 38.174833, lng: 14.896602};
         var map = new google.maps.Map(document.getElementById('map'), {
-          center: myLatLng,
+          center: gioiosa_marea,
           zoom: 16
         });
 
@@ -34,27 +34,40 @@
         "i suoi abitanti, evacuati, fondarono un nuovo centro sulla costa, ribattezzandolo appunto Gioiosa Marea, per distinguerlo dal vecchio." +
         "È divenuto negli anni una tra le mete turistiche più rilevanti della provincia di Messina[senza fonte] e della Sicilia.</p>"
 
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
+        
 
-        var marker = new google.maps.Marker({
-        position: myLatLng,
-        map: map,
-        title: 'Gioiosa Marea'
-        });
+        var locations = [
+          [contentString, 38.174833, 14.896602],
+          ['Comune', 38.174555, 14.898126],
+          ['Grotte del tono', 38.175495, 14.895324]
+        ];
 
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
+        var infowindow =  new google.maps.InfoWindow({});
+        var marker, count;
+        for (count = 0; count < locations.length; count++) {
+            marker = new google.maps.Marker({
+            position: new google.maps.LatLng(locations[count][1], locations[count][2]),
+            map: map,
+            title: locations[count][0]
+          });
+
+          google.maps.event.addListener(marker, 'click', (function (marker, count) {
+            return function () {
+              infowindow.setContent(locations[count][0]);
+              infowindow.open(map, marker);
+            }
+    })(marker, count));
+  }
+
+
+
 
 
 
 
       }
     </script>
-  </script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqeNN9WB33TWuC7i-HXNlqk2yrNpIKio0&callback=initMap"
-  async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqeNN9WB33TWuC7i-HXNlqk2yrNpIKio0&callback=initMap"
+    async defer></script>
   </body>
 </html>
